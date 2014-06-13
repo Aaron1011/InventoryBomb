@@ -47,10 +47,10 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	public void onEnable() {
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
 		this.getServer().getPluginManager().registerEvents(this, this);
-		/*ItemMeta meta = bombItem.getItemMeta();
+		ItemMeta meta = bombItem.getItemMeta();
 		meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!");
 		
-		this.bombItem.setItemMeta(meta);*/
+		this.bombItem.setItemMeta(meta);
 		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			@Override
