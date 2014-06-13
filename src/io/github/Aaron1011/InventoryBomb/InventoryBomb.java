@@ -104,8 +104,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 			
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("Timer", 5);
-			/*meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!" +  ChatColor.YELLOW + "5" +  ChatColor.RESET + " seconds");
-			item.setItemMeta(meta);*/
+			meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!" +  ChatColor.YELLOW + "5" +  ChatColor.RESET + " seconds");
+			item.setItemMeta(meta);
 			
 
 			bombs.put(item, map);
