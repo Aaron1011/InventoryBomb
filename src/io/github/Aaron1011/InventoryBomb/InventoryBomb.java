@@ -47,16 +47,16 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	public void onEnable() {
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
 		this.getServer().getPluginManager().registerEvents(this, this);
-		ItemMeta meta = bombItem.getItemMeta();
+		/*ItemMeta meta = bombItem.getItemMeta();
 		meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!");
 		
-		this.bombItem.setItemMeta(meta);
+		this.bombItem.setItemMeta(meta);*/
 		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			@Override
 			public void run() {
 				for (Map.Entry<ItemStack, HashMap<String, Object>> entry : bombs.entrySet()) {				
-					Map<String, Object> data = entry.getValue();
+					HashMap<String, Object> data = entry.getValue();
 					int time = ((int) data.get("Timer")) - 1;
 					
 					ItemStack item = entry.getKey();
@@ -64,7 +64,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					
 
 					data.put("Timer", time);
-					if (time == 0) {
+					if (time <= 0) {
 						Bukkit.broadcastMessage("Boom!");
 
 						if (data.containsKey("Owner")) {
@@ -72,15 +72,24 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 							player.sendMessage("Your bomb blew up!");
 							player.damage(0.0);
 						}
+						if (bombs.containsKey(item)) {
+							Bukkit.broadcastMessage("Yes!");
+						}
+						else {
+							Bukkit.broadcastMessage("No!");
+							Bukkit.broadcastMessage(bombs.keySet().toString());
+						}
 						bombs.remove(item);
+						continue;
 
 					}
 					
 
-					ItemMeta meta = item.getItemMeta();
+					/*ItemMeta meta = item.getItemMeta();
 					
 					meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!" +  ChatColor.YELLOW + time +  ChatColor.RESET + " seconds");
 					item.setItemMeta(meta);
+					bombs.put(item, data);*/
 				}
 			}
 		}, 0L, 20L);
@@ -95,8 +104,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 			
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("Timer", 5);
-			meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!" +  ChatColor.YELLOW + "5" +  ChatColor.RESET + " seconds");
-			item.setItemMeta(meta);
+			/*meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!" +  ChatColor.YELLOW + "5" +  ChatColor.RESET + " seconds");
+			item.setItemMeta(meta);*/
 			
 
 			bombs.put(item, map);
