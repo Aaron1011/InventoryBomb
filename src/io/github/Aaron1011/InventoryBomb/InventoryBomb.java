@@ -55,8 +55,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			@Override
 			public void run() {
-				HashMap<ItemStack, HashMap<String, Object>> toAdd = new HashMap<ItemStack, HashMap<String, Object>>();
-				
 				for (Map.Entry<ItemStack, HashMap<String, Object>> entry : bombs.entrySet()) {				
 					HashMap<String, Object> data = entry.getValue();
 					int time = ((int) data.get("Timer")) - 1;
@@ -87,14 +85,12 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					}
 					
 
-					ItemMeta meta = item.getItemMeta();
+					/*ItemMeta meta = item.getItemMeta();
 					
 					meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!" +  ChatColor.YELLOW + time +  ChatColor.RESET + " seconds");
-					bombs.remove(item);
 					item.setItemMeta(meta);
-					toAdd.put(item, data);
+					bombs.put(item, data);*/
 				}
-			bombs.putAll(toAdd);
 			}
 		}, 0L, 20L);
 	}
