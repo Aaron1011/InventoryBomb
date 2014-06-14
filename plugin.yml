@@ -1,3 +1,10 @@
 name: InventoryBomb
 main: io.github.Aaron1011.InventoryBomb.InventoryBomb
 version: 1.0.0
+
+commands:
+    giveBomb:
+        description: Give a bomb to the command runner, or the specified player
+        usage:  /giveBomb [player]
+        permission: InventoryBomb.giveBomb
+        permission-message: You don't have permission to use /givebomb
