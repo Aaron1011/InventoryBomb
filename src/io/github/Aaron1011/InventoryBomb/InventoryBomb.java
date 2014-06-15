@@ -64,12 +64,9 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 						player.getInventory().remove(item);
 						player.damage(0.0);
 
-						if (bombs.containsKey(item)) {
+						if (!bombs.containsKey(item)) {
+							getLogger().severe("Somehow, we've lost track of a bomb. This should NEVER happen - something is messed up");
 							Bukkit.broadcastMessage("Yes! - bomb!");
-						}
-						else {
-							Bukkit.broadcastMessage("No! - bomb!");
-							Bukkit.broadcastMessage(bombs.keySet().toString());
 						}
 						bombs.remove(item);
 						continue;
