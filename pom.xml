@@ -8,7 +8,11 @@
   	<repository>
   	  <id>bukkit-repo</id>
   	  <url>http://repo.bukkit.org/content/groups/public/</url>
-  	</repository>
+        </repository>
+        <repository>
+	  <id>Plugin Metrics</id>
+	  <url>http://repo.mcstats.org/content/repositories/public</url>
+	</repository>
   </repositories>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -36,6 +40,11 @@
   		<artifactId>craftbukkit</artifactId>
   		<scope>provided</scope>
   		<version>${minecraft.version}-${craftbukkit.version}-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.mcstats.MOD</groupId>
+  		<artifactId>metrics</artifactId>
+  		<version>R6</version>
   	</dependency>
   </dependencies>
   <properties>
