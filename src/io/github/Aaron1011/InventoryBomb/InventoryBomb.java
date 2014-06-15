@@ -75,13 +75,11 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 					
 					ItemStack inInventory = player.getInventory().getItem(player.getInventory().first(item));
-					if (inInventory != null) {
-						Bukkit.broadcastMessage("Found it!");
-						item = inInventory;
+					if (inInventory == null) {
+						getLogger().warning("A bomb is missing from the inventory it should be in");
+						continue;
 					}
-					else {
-						Bukkit.broadcastMessage("Aww!");
-					}
+					item = inInventory;
 					
 					ItemMeta meta = item.getItemMeta();
 					
