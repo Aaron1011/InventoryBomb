@@ -44,23 +44,27 @@ import de.ntcomputer.minecraft.controllablemobs.api.ControllableMobs;
 public final class InventoryBomb extends JavaPlugin implements Listener {
 	
 	HashMap<ItemStack, HashMap<String, Object>> bombs;
-	HashMap<Item, ItemStack> droppedBombs;
+	HashMap<Item, HashMap<String, Object>> droppedBombs;
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
-	HashMap<ItemStack, HashMap<String, Object>> addBombs;
-	HashMap<ItemStack, HashMap<String, Object>> removeBombs;
+	private ItemStack globalBomb;
+	//HashMap<ItemStack, HashMap<String, Object>> addBombs;
+	//HashMap<ItemStack, HashMap<String, Object>> removeBombs;
 
 	@Override
 	public void onDisable() {
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		this.addBombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		this.removeBombs = new HashMap<ItemStack, HashMap<String, Object>>();
+		//this.addBombs = new HashMap<ItemStack, HashMap<String, Object>>();
+		//this.removeBombs = new HashMap<ItemStack, HashMap<String, Object>>();
+		this.droppedBombs = new HashMap<Item, HashMap<String, Object>>();
 	}
 
 	@Override
 	public void onEnable() {
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		this.addBombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		this.removeBombs = new HashMap<ItemStack, HashMap<String, Object>>();
+		//this.addBombs = new HashMap<ItemStack, HashMap<String, Object>>();
+		//this.removeBombs = new HashMap<ItemStack, HashMap<String, Object>>();
+		this.droppedBombs = new HashMap<Item, HashMap<String, Object>>();
+		
 		this.getServer().getPluginManager().registerEvents(this, this);
 		ItemMeta meta = bombItem.getItemMeta();
 		meta.setDisplayName(getName(5));
@@ -84,37 +88,37 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					if (time <= 0) {
 						Bukkit.broadcastMessage("Boom!");
 
-						if (data.containsKey("Owner")) {
-							Player player = (Player) data.get("Owner");
-							player.playSound(player.getLocation(), Sound.EXPLODE, 1, 5);
-							player.sendMessage("Your bomb blew up!");
-							player.getInventory().remove(item);
-							player.damage(0.0);
-						}
-						else if (data.containsKey("Item")) {
+						//if (data.containsKey("Owner")) {
+						Player player = (Player) data.get("Owner");
+						player.playSound(player.getLocation(), Sound.EXPLODE, 1, 5);
+						player.sendMessage("Your bomb blew up!");
+						player.getInventory().remove(item);
+						player.damage(0.0);
+						//}
+						/*else if (data.containsKey("Item")) {
 							Item bomb = (Item) data.get("Item");
 							bomb.getWorld().createExplosion(bomb.getLocation(), 1);
 							bomb.remove();
-						}
+						}*/
 						if (bombs.containsKey(item)) {
-							Bukkit.broadcastMessage("Yes!");
+							Bukkit.broadcastMessage("Yes! - bomb!");
 						}
 						else {
-							Bukkit.broadcastMessage("No!");
+							Bukkit.broadcastMessage("No! - bomb!");
 							Bukkit.broadcastMessage(bombs.keySet().toString());
 						}
 						bombs.remove(item);
 						continue;
+					}
 
-					}
 					
-					if (data.containsKey("Owner")) {
-						Player player = (Player) data.get("Owner");
-						player.playSound(player.getLocation(), Sound.CLICK, 1, 5);
-						player.getInventory().addItem(new ItemStack(Material.LEAVES));
-					}
+					//if (data.containsKey("Owner")) {
+					Player player = (Player) data.get("Owner");
+					player.playSound(player.getLocation(), Sound.CLICK, 1, 5);
+					player.getInventory().addItem(new ItemStack(Material.LEAVES));
+					//}
 					
-					if (data.containsKey("Item")) {
+					/*if (data.containsKey("Item")) {
 						Item drop = ((Item) data.get("Item"));
 						data.remove(drop);
 						ItemStack stack = drop.getItemStack();
@@ -125,9 +129,17 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 						drop.setFireTicks(20);
 						data.put("Item", drop);
 						
+					}*/
+					
+					ItemStack inInventory = player.getInventory().getItem(player.getInventory().first(globalBomb));
+					if (inInventory != null) {
+						Bukkit.broadcastMessage("Found it!");
+						globalBomb = inInventory;
+					}
+					else {
+						Bukkit.broadcastMessage("Aww!");
 					}
 					
-
 					ItemMeta meta = item.getItemMeta();
 					
 					bombs.remove(item);
@@ -135,20 +147,80 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 					item.setItemMeta(meta);
 					bombs.put(item, data);
+					
+					if (globalBomb != null) {
+						Bukkit.broadcastMessage("Global!");
+						globalBomb.setItemMeta(meta);
+					}
+					
 
-				}
+				
 				/*bombs.putAll(addBombs);
 				for (ItemStack key : removeBombs.keySet()) {
 					bombs.remove(key);
 				}*/
-				for (ItemStack key : removeBombs.keySet()) {
+				/*for (ItemStack key : removeBombs.keySet()) {
 					bombs.remove(key);
 				}
 				bombs.putAll(addBombs);
 				
 				addBombs.clear();
-				removeBombs.clear();
+				removeBombs.clear();*/
+					
 			}
+			for (Map.Entry<Item, HashMap<String, Object>> entry : droppedBombs.entrySet()) {
+				HashMap<String, Object> data = entry.getValue();
+				int time = ((int) data.get("Timer")) - 1;
+				
+				Item bomb = entry.getKey();
+				Bukkit.broadcastMessage("Time: " + time);
+				
+				
+				
+
+				data.put("Timer", time);
+				if (time <= 0) {
+					Bukkit.broadcastMessage("Boom!");
+
+					/*//if (data.containsKey("Owner")) {
+					Player player = (Player) data.get("Owner");
+					player.playSound(player.getLocation(), Sound.EXPLODE, 1, 5);
+					player.sendMessage("Your bomb blew up!");
+					player.getInventory().remove(item);
+					player.damage(0.0);
+					//}*/
+					/*else if (data.containsKey("Item")) {
+						Item bomb = (Item) data.get("Item");
+						bomb.getWorld().createExplosion(bomb.getLocation(), 1);
+						bomb.remove();
+					}*/
+					bomb.getWorld().createExplosion(bomb.getLocation(), 1);
+					bomb.remove();
+					
+					if (droppedBombs.containsKey(bomb)) {
+						Bukkit.broadcastMessage("Yes! - dropped bomb");
+					}
+					else {
+						Bukkit.broadcastMessage("No! - dropped bomb");
+						Bukkit.broadcastMessage(bombs.keySet().toString());
+					}
+					droppedBombs.remove(bomb);
+					continue;
+				}
+				
+					//Item drop = ((Item) data.get("Item"));
+				ItemStack stack = bomb.getItemStack();
+				ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName(getName(time));
+				stack.setItemMeta(meta);
+				bomb.setItemStack(stack);
+				bomb.setFireTicks(20);
+				//data.put("Item", drop);
+				
+			}
+
+			}
+			
 		}, 0L, 20L);
 	}
 	
@@ -171,8 +243,12 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 							Bukkit.broadcastMessage("Dropped item!");
 							Item i = (Item) e;
 							if (bombs.containsKey(i.getItemStack())) {
+								HashMap<String, Object> data = bombs.get(i.getItemStack());
+								bombs.remove(i.getItemStack());
+								droppedBombs.put(i, data);
+								i.setPickupDelay(0);
 								Bukkit.broadcastMessage("Adding!");
-								bombs.get(i.getItemStack()).put("Item", i);
+								//bombs.get(i.getItemStack()).put("Item", i);
 							}
 						}
 					}
@@ -181,17 +257,19 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		}
 	}
 	
-	@EventHandler
+	/*@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		if (event.getItem().getType() == Material.BLAZE_ROD) {
 			Bukkit.broadcastMessage("Hi");
 			event.getItem().addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
 			ItemStack drop = new ItemStack(event.getItem());
-			drop.setAmount(1);
+			ItemMeta meta = drop.getItemMeta();
+			meta.setDisplayName("Hello world!");
+			drop.setItemMeta(meta);
 			Item item = event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), drop);
 			item.setFireTicks(40);
 		}
-	}
+	}*/
 	
 	@EventHandler
 	public void onItemPickup(PlayerPickupItemEvent event) {
@@ -207,23 +285,41 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		event.getPlayer().getInventory().addItem(item);
 		event.getItem().remove();
 		
-		if (bombs.containsKey(item)) {
+		
+		
+		if (droppedBombs.containsKey(event.getItem())) {
+			HashMap<String, Object> data = droppedBombs.get(event.getItem());
+			data.put("Owner", event.getPlayer());
+			droppedBombs.remove(event.getItem());
+			bombs.put(item, data);
+			globalBomb = item;
+			Bukkit.broadcastMessage("Updated owner: " + bombs.get(item).containsKey("Owner"));
+		}
+		else {
+			Bukkit.broadcastMessage("Nope!");
+		}
+		
+		
+		
+		/*if (bombs.containsKey(item)) {
 			//bombs.get(item).put("Owner", event.getPlayer());
 			HashMap<String, Object> data = bombs.get(item);
 			removeBombs.put(item, null);
 			data.put("Owner", event.getPlayer());
 			bombs.put(item, data);
 			Bukkit.broadcastMessage("Updated owner: " + bombs.get(item).containsKey("Owner"));
-		}
+		}*/
 	}
 	
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent event) {
 		Item item = event.getItemDrop();
 		if (bombs.containsKey(item.getItemStack())) {
+			//item.setPickupDelay(2);
 			Bukkit.broadcastMessage("Dropped!");
-			bombs.get(item.getItemStack()).put("Item", item);
-			bombs.get(item.getItemStack()).remove("Owner");
+			HashMap<String, Object> data = bombs.get(item.getItemStack());
+			bombs.remove(item.getItemStack());
+			droppedBombs.put(item, data);
 		}
 
 	}
@@ -254,7 +350,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		ItemStack item = new ItemStack(bombItem);
 		ItemMeta meta = item.getItemMeta();
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("Timer", 5);
+		map.put("Timer", 10);
 		meta.setDisplayName(getName(5));
 		item.setItemMeta(meta);
 		bombs.put(item, map);
@@ -264,6 +360,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	private ItemStack createBomb(Player player) {
 		ItemStack bomb = createBomb();
 		HashMap<String, Object> map = bombs.get(bomb);
+		bombs.remove(bomb);
 		map.put("Owner", player);
 		bombs.put(bomb, map);
 		return bomb;
