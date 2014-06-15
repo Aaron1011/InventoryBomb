@@ -102,10 +102,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					int time = ((int) data.get("Timer")) - 1;
 
 					Item bomb = entry.getKey();
-					Bukkit.broadcastMessage("Time: " + time);
-
-
-
 
 					data.put("Timer", time);
 					if (time <= 0) {
@@ -141,8 +137,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 			ItemStack item = createBomb();
 			
 			event.getDrops().add(item);
-			
-			Bukkit.broadcastMessage("Hello!");
 			
 			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 				@Override
