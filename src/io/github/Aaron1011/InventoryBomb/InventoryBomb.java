@@ -131,10 +131,10 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 						
 					}*/
 					
-					ItemStack inInventory = player.getInventory().getItem(player.getInventory().first(globalBomb));
+					ItemStack inInventory = player.getInventory().getItem(player.getInventory().first(item));
 					if (inInventory != null) {
 						Bukkit.broadcastMessage("Found it!");
-						globalBomb = inInventory;
+						item = inInventory;
 					}
 					else {
 						Bukkit.broadcastMessage("Aww!");
@@ -148,9 +148,9 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					item.setItemMeta(meta);
 					bombs.put(item, data);
 					
-					if (globalBomb != null) {
+					if (item != null) {
 						Bukkit.broadcastMessage("Global!");
-						globalBomb.setItemMeta(meta);
+						item.setItemMeta(meta);
 					}
 					
 
