@@ -39,7 +39,7 @@
   	<dependency>
   		<groupId>org.mcstats</groupId>
 		<artifactId>metrics</artifactId>
-		<scope>provided</scope>
+		<scope>compile</scope>
   		<version>R6</version>
   	</dependency>
   </dependencies>
