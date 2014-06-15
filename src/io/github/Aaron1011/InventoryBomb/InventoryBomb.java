@@ -46,19 +46,24 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	HashMap<ItemStack, HashMap<String, Object>> bombs;
 	HashMap<Item, ItemStack> droppedBombs;
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
+	HashMap<ItemStack, HashMap<String, Object>> addBombs;
+	HashMap<ItemStack, HashMap<String, Object>> removeBombs;
 
 	@Override
 	public void onDisable() {
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		this.droppedBombs = new HashMap<Item, ItemStack>();
+		this.addBombs = new HashMap<ItemStack, HashMap<String, Object>>();
+		this.removeBombs = new HashMap<ItemStack, HashMap<String, Object>>();
 	}
 
 	@Override
 	public void onEnable() {
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
+		this.addBombs = new HashMap<ItemStack, HashMap<String, Object>>();
+		this.removeBombs = new HashMap<ItemStack, HashMap<String, Object>>();
 		this.getServer().getPluginManager().registerEvents(this, this);
 		ItemMeta meta = bombItem.getItemMeta();
-		meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!");
+		meta.setDisplayName(getName(5));
 		
 		this.bombItem.setItemMeta(meta);
 		
@@ -110,28 +115,39 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					}
 					
 					if (data.containsKey("Item")) {
-						/*Item drop = ((Item) data.get("Item"));
+						Item drop = ((Item) data.get("Item"));
 						data.remove(drop);
 						ItemStack stack = drop.getItemStack();
 						ItemMeta meta = stack.getItemMeta();
-						meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!" +  ChatColor.YELLOW + time +  ChatColor.RESET + " seconds");
+						meta.setDisplayName(getName(time));
 						stack.setItemMeta(meta);
 						drop.setItemStack(stack);
 						drop.setFireTicks(20);
-						data.put("Item", drop);*/
+						data.put("Item", drop);
 						
 					}
 					
 
-					/*ItemMeta meta = item.getItemMeta();
+					ItemMeta meta = item.getItemMeta();
 					
 					bombs.remove(item);
-					meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb!" +  ChatColor.YELLOW + time +  ChatColor.RESET + " seconds");
+					meta.setDisplayName(getName(time));
 
 					item.setItemMeta(meta);
-					bombs.put(item, data);*/
+					bombs.put(item, data);
 
 				}
+				/*bombs.putAll(addBombs);
+				for (ItemStack key : removeBombs.keySet()) {
+					bombs.remove(key);
+				}*/
+				for (ItemStack key : removeBombs.keySet()) {
+					bombs.remove(key);
+				}
+				bombs.putAll(addBombs);
+				
+				addBombs.clear();
+				removeBombs.clear();
 			}
 		}, 0L, 20L);
 	}
@@ -183,8 +199,20 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		Bukkit.broadcastMessage("Current stack: " + item.toString());
 		Bukkit.broadcastMessage("All bombs: " + bombs.keySet());
 		
+		//item.setAmount(20);
+		Bukkit.broadcastMessage("20 items!");
+		//item.addUnsafeEnchantment(Enchantment.WATER_WORKER, 1);
+		
+		event.setCancelled(true);
+		event.getPlayer().getInventory().addItem(item);
+		event.getItem().remove();
+		
 		if (bombs.containsKey(item)) {
-			bombs.get(item).put("Owner", event.getPlayer());
+			//bombs.get(item).put("Owner", event.getPlayer());
+			HashMap<String, Object> data = bombs.get(item);
+			removeBombs.put(item, null);
+			data.put("Owner", event.getPlayer());
+			bombs.put(item, data);
 			Bukkit.broadcastMessage("Updated owner: " + bombs.get(item).containsKey("Owner"));
 		}
 	}
@@ -227,7 +255,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		ItemMeta meta = item.getItemMeta();
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("Timer", 5);
-		meta.setDisplayName(ChatColor.RESET + "" + ChatColor.RED + "Bomb! " +  ChatColor.YELLOW + "5" +  ChatColor.RESET + " seconds");
+		meta.setDisplayName(getName(5));
 		item.setItemMeta(meta);
 		bombs.put(item, map);
 		return item;
@@ -239,5 +267,10 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		map.put("Owner", player);
 		bombs.put(bomb, map);
 		return bomb;
+	}
+	
+	private String getName(int time) {
+		Bukkit.broadcastMessage("Time called: " + time);
+		return ChatColor.RESET + "" + ChatColor.RED + "Bomb! " +  ChatColor.YELLOW + time +  ChatColor.RESET + " seconds";
 	}
 }
