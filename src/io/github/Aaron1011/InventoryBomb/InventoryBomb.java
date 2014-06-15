@@ -53,10 +53,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					int time = ((int) data.get("Timer")) - 1;
 					
 					ItemStack item = entry.getKey();
-					Bukkit.broadcastMessage("Time: " + time);
-					
-					
-					
 
 					data.put("Timer", time);
 					if (time <= 0) {
@@ -189,8 +185,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		Bukkit.broadcastMessage("Current stack: " + item.toString());
 		Bukkit.broadcastMessage("All bombs: " + bombs.keySet());
 		
-		Bukkit.broadcastMessage("20 items!");
-		
 		event.setCancelled(true);
 		event.getPlayer().getInventory().addItem(item);
 		event.getItem().remove();
@@ -216,7 +210,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	public void onItemDrop(PlayerDropItemEvent event) {
 		Item item = event.getItemDrop();
 		if (bombs.containsKey(item.getItemStack())) {
-			Bukkit.broadcastMessage("Dropped!");
 			HashMap<String, Object> data = bombs.get(item.getItemStack());
 			bombs.remove(item.getItemStack());
 			droppedBombs.put(item, data);
@@ -268,7 +261,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	}
 	
 	private String getName(int time) {
-		Bukkit.broadcastMessage("Time called: " + time);
 		return ChatColor.RESET + "" + ChatColor.RED + "Bomb! " +  ChatColor.YELLOW + time +  ChatColor.RESET + " seconds";
 	}
 }
