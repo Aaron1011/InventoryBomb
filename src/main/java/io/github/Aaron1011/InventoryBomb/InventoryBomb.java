@@ -36,6 +36,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
+		this.saveDefaultConfig();
+		
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
 		this.droppedBombs = new HashMap<Item, HashMap<String, Object>>();
 
