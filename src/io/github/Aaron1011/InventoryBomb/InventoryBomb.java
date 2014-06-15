@@ -235,6 +235,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("giveBomb")) {
 			if (args.length == 1) {
+				@SuppressWarnings("deprecation")
 				Player player = Bukkit.getPlayer(args[0]);
 				player.getInventory().addItem(createBomb(player));
 			}
