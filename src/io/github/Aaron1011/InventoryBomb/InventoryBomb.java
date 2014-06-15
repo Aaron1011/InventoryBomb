@@ -38,20 +38,20 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	public void onEnable() {
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
 		this.droppedBombs = new HashMap<Item, HashMap<String, Object>>();
-		
+
 		this.getServer().getPluginManager().registerEvents(this, this);
 		ItemMeta meta = bombItem.getItemMeta();
 		meta.setDisplayName(getName(5));
-		
+
 		this.bombItem.setItemMeta(meta);
-		
+
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			@Override
 			public void run() {
 				for (Map.Entry<ItemStack, HashMap<String, Object>> entry : bombs.entrySet()) {				
 					HashMap<String, Object> data = entry.getValue();
 					int time = ((int) data.get("Timer")) - 1;
-					
+
 					ItemStack item = entry.getKey();
 
 					data.put("Timer", time);
@@ -69,73 +69,68 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 						continue;
 					}
 
-					
+
 					Player player = (Player) data.get("Owner");
 					player.playSound(player.getLocation(), Sound.CLICK, 1, 5);
 
-					
+
 					ItemStack inInventory = player.getInventory().getItem(player.getInventory().first(item));
 					if (inInventory == null) {
 						getLogger().warning("A bomb is missing from the inventory it should be in");
 						continue;
 					}
 					item = inInventory;
-					
+
 					ItemMeta meta = item.getItemMeta();
-					
+
 					bombs.remove(item);
 					meta.setDisplayName(getName(time));
 
 					item.setItemMeta(meta);
 					bombs.put(item, data);
-					
+
 					if (item != null) {
 						item.setItemMeta(meta);
 					}
-					
 
 
-					
-			}
-			for (Map.Entry<Item, HashMap<String, Object>> entry : droppedBombs.entrySet()) {
-				HashMap<String, Object> data = entry.getValue();
-				int time = ((int) data.get("Timer")) - 1;
-				
-				Item bomb = entry.getKey();
-				Bukkit.broadcastMessage("Time: " + time);
-				
-				
-				
 
-				data.put("Timer", time);
-				if (time <= 0) {
-					Bukkit.broadcastMessage("Boom!");
 
-					bomb.getWorld().createExplosion(bomb.getLocation(), 1);
-					bomb.remove();
-					
-					if (droppedBombs.containsKey(bomb)) {
-						Bukkit.broadcastMessage("Yes! - dropped bomb");
-					}
-					else {
-						Bukkit.broadcastMessage("No! - dropped bomb");
-						Bukkit.broadcastMessage(bombs.keySet().toString());
-					}
-					droppedBombs.remove(bomb);
-					continue;
 				}
-				
-				ItemStack stack = bomb.getItemStack();
-				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(getName(time));
-				stack.setItemMeta(meta);
-				bomb.setItemStack(stack);
-				bomb.setFireTicks(20);
-				
-			}
+				for (Map.Entry<Item, HashMap<String, Object>> entry : droppedBombs.entrySet()) {
+					HashMap<String, Object> data = entry.getValue();
+					int time = ((int) data.get("Timer")) - 1;
+
+					Item bomb = entry.getKey();
+					Bukkit.broadcastMessage("Time: " + time);
+
+
+
+
+					data.put("Timer", time);
+					if (time <= 0) {
+						bomb.getWorld().createExplosion(bomb.getLocation(), 1);
+						bomb.remove();
+
+						if (!droppedBombs.containsKey(bomb)) {
+							getLogger().severe("Somehow, we've lost track of a bomb. This should NEVER happen - something is messed up");
+							continue;
+						}
+						droppedBombs.remove(bomb);
+
+					}
+
+					ItemStack stack = bomb.getItemStack();
+					ItemMeta meta = stack.getItemMeta();
+					meta.setDisplayName(getName(time));
+					stack.setItemMeta(meta);
+					bomb.setItemStack(stack);
+					bomb.setFireTicks(20);
+
+				}
 
 			}
-			
+
 		}, 0L, 20L);
 	}
 	
