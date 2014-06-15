@@ -208,7 +208,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 			data.put("Owner", event.getPlayer());
 			droppedBombs.remove(event.getItem());
 			bombs.put(item, data);
-			globalBomb = item;
 			Bukkit.broadcastMessage("Updated owner: " + bombs.get(item).containsKey("Owner"));
 		}
 		else {
