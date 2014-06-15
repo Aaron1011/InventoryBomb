@@ -27,22 +27,16 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	HashMap<ItemStack, HashMap<String, Object>> bombs;
 	HashMap<Item, HashMap<String, Object>> droppedBombs;
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
-	//HashMap<ItemStack, HashMap<String, Object>> addBombs;
-	//HashMap<ItemStack, HashMap<String, Object>> removeBombs;
 
 	@Override
 	public void onDisable() {
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		//this.addBombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		//this.removeBombs = new HashMap<ItemStack, HashMap<String, Object>>();
 		this.droppedBombs = new HashMap<Item, HashMap<String, Object>>();
 	}
 
 	@Override
 	public void onEnable() {
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		//this.addBombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		//this.removeBombs = new HashMap<ItemStack, HashMap<String, Object>>();
 		this.droppedBombs = new HashMap<Item, HashMap<String, Object>>();
 		
 		this.getServer().getPluginManager().registerEvents(this, this);
@@ -222,7 +216,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	public void onItemDrop(PlayerDropItemEvent event) {
 		Item item = event.getItemDrop();
 		if (bombs.containsKey(item.getItemStack())) {
-			//item.setPickupDelay(2);
 			Bukkit.broadcastMessage("Dropped!");
 			HashMap<String, Object> data = bombs.get(item.getItemStack());
 			bombs.remove(item.getItemStack());
