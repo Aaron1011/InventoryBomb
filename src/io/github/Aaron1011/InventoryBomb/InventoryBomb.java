@@ -115,7 +115,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					//if (data.containsKey("Owner")) {
 					Player player = (Player) data.get("Owner");
 					player.playSound(player.getLocation(), Sound.CLICK, 1, 5);
-					player.getInventory().addItem(new ItemStack(Material.LEAVES));
 					//}
 					
 					/*if (data.containsKey("Item")) {
