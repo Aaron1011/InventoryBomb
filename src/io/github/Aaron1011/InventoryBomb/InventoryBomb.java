@@ -121,8 +121,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					meta.setDisplayName(getName(time));
 					stack.setItemMeta(meta);
 					bomb.setItemStack(stack);
-					bomb.setFireTicks(20);
-
 				}
 
 			}
