@@ -56,8 +56,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 					data.put("Timer", time);
 					if (time <= 0) {
-						Bukkit.broadcastMessage("Boom!");
-
 						Player player = (Player) data.get("Owner");
 						player.playSound(player.getLocation(), Sound.EXPLODE, 1, 5);
 						player.sendMessage("Your bomb blew up!");
@@ -66,7 +64,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 						if (!bombs.containsKey(item)) {
 							getLogger().severe("Somehow, we've lost track of a bomb. This should NEVER happen - something is messed up");
-							Bukkit.broadcastMessage("Yes! - bomb!");
 						}
 						bombs.remove(item);
 						continue;
@@ -95,7 +92,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					bombs.put(item, data);
 					
 					if (item != null) {
-						Bukkit.broadcastMessage("Global!");
 						item.setItemMeta(meta);
 					}
 					
@@ -160,14 +156,12 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 				public void run() {
 					for (Entity e: player.getNearbyEntities(4,4,4)) {
 						if (e.getType() == EntityType.DROPPED_ITEM) {
-							Bukkit.broadcastMessage("Dropped item!");
 							Item i = (Item) e;
 							if (bombs.containsKey(i.getItemStack())) {
 								HashMap<String, Object> data = bombs.get(i.getItemStack());
 								bombs.remove(i.getItemStack());
 								droppedBombs.put(i, data);
 								i.setPickupDelay(0);
-								Bukkit.broadcastMessage("Adding!");
 							}
 						}
 					}
@@ -179,8 +173,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onItemPickup(PlayerPickupItemEvent event) {
 		ItemStack item = event.getItem().getItemStack();
-		Bukkit.broadcastMessage("Current stack: " + item.toString());
-		Bukkit.broadcastMessage("All bombs: " + bombs.keySet());
 		
 		event.setCancelled(true);
 		event.getPlayer().getInventory().addItem(item);
@@ -189,14 +181,11 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		
 		
 		if (droppedBombs.containsKey(event.getItem())) {
+			getLogger().info("Picked up a bomb");
 			HashMap<String, Object> data = droppedBombs.get(event.getItem());
 			data.put("Owner", event.getPlayer());
 			droppedBombs.remove(event.getItem());
 			bombs.put(item, data);
-			Bukkit.broadcastMessage("Updated owner: " + bombs.get(item).containsKey("Owner"));
-		}
-		else {
-			Bukkit.broadcastMessage("Nope!");
 		}
 		
 		
