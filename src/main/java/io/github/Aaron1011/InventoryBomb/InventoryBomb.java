@@ -1,5 +1,6 @@
 package io.github.Aaron1011.InventoryBomb;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
 
 public final class InventoryBomb extends JavaPlugin implements Listener {
 	
@@ -36,6 +38,13 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    // Failed to submit the stats :-(
+		}
+		
 		this.saveDefaultConfig();
 		
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
