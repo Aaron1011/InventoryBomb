@@ -27,7 +27,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	HashMap<ItemStack, HashMap<String, Object>> bombs;
 	HashMap<Item, HashMap<String, Object>> droppedBombs;
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
-	private ItemStack globalBomb;
 	//HashMap<ItemStack, HashMap<String, Object>> addBombs;
 	//HashMap<ItemStack, HashMap<String, Object>> removeBombs;
 
