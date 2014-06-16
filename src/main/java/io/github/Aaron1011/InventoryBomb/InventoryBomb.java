@@ -29,6 +29,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	HashMap<ItemStack, HashMap<String, Object>> bombs;
 	HashMap<Item, HashMap<String, Object>> droppedBombs;
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
+	int delay;
 
 	@Override
 	public void onDisable() {
@@ -47,12 +48,14 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		
 		this.saveDefaultConfig();
 		
+		delay = getConfig().getInt("bomb.delay");
+		
 		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
 		this.droppedBombs = new HashMap<Item, HashMap<String, Object>>();
 
 		this.getServer().getPluginManager().registerEvents(this, this);
 		ItemMeta meta = bombItem.getItemMeta();
-		meta.setDisplayName(getName(5));
+		meta.setDisplayName(getName(delay));
 
 		this.bombItem.setItemMeta(meta);
 
@@ -226,8 +229,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		ItemStack item = new ItemStack(bombItem);
 		ItemMeta meta = item.getItemMeta();
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("Timer", 10);
-		meta.setDisplayName(getName(5));
+		map.put("Timer", delay);
+		meta.setDisplayName(getName(delay));
 		item.setItemMeta(meta);
 		bombs.put(item, map);
 		return item;
