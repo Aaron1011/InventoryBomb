@@ -205,6 +205,10 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("giveBomb")) {
+			if (!sender.hasPermission("inventorybomb.givebomb")) {
+				sender.sendMessage("You don't have permission to use /givebomb!");
+				return true;
+			}
 			if (args.length == 1) {
 				@SuppressWarnings("deprecation")
 				Player player = Bukkit.getPlayer(args[0]);
