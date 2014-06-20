@@ -1,7 +1,7 @@
 package io.github.Aaron1011.InventoryBomb;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -26,15 +26,15 @@ import org.mcstats.Metrics;
 
 public final class InventoryBomb extends JavaPlugin implements Listener {
 	
-	HashMap<ItemStack, HashMap<String, Object>> bombs;
-	HashMap<Item, HashMap<String, Object>> droppedBombs;
+	ConcurrentHashMap<ItemStack, ConcurrentHashMap<String, Object>> bombs;
+	ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>> droppedBombs;
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
 	int delay;
 
 	@Override
 	public void onDisable() {
-		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		this.droppedBombs = new HashMap<Item, HashMap<String, Object>>();
+		this.bombs = new ConcurrentHashMap<ItemStack, ConcurrentHashMap<String, Object>>();
+		this.droppedBombs = new ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>>();
 	}
 
 	@Override
@@ -50,8 +50,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		
 		delay = getConfig().getInt("bomb.delay");
 		
-		this.bombs = new HashMap<ItemStack, HashMap<String, Object>>();
-		this.droppedBombs = new HashMap<Item, HashMap<String, Object>>();
+		this.bombs = new ConcurrentHashMap<ItemStack, ConcurrentHashMap<String, Object>>();
+		this.droppedBombs = new ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>>();
 
 		this.getServer().getPluginManager().registerEvents(this, this);
 		ItemMeta meta = bombItem.getItemMeta();
@@ -62,8 +62,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			@Override
 			public void run() {
-				for (Map.Entry<ItemStack, HashMap<String, Object>> entry : bombs.entrySet()) {				
-					HashMap<String, Object> data = entry.getValue();
+				for (Map.Entry<ItemStack, ConcurrentHashMap<String, Object>> entry : bombs.entrySet()) {				
+					ConcurrentHashMap<String, Object> data = entry.getValue();
 					int time = ((int) data.get("Timer")) - 1;
 
 					ItemStack item = entry.getKey();
@@ -111,8 +111,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 
 				}
-				for (Map.Entry<Item, HashMap<String, Object>> entry : droppedBombs.entrySet()) {
-					HashMap<String, Object> data = entry.getValue();
+				for (Map.Entry<Item, ConcurrentHashMap<String, Object>> entry : droppedBombs.entrySet()) {
+					ConcurrentHashMap<String, Object> data = entry.getValue();
 					int time = ((int) data.get("Timer")) - 1;
 
 					Item bomb = entry.getKey();
@@ -157,7 +157,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 						if (e.getType() == EntityType.DROPPED_ITEM) {
 							Item i = (Item) e;
 							if (bombs.containsKey(i.getItemStack())) {
-								HashMap<String, Object> data = bombs.get(i.getItemStack());
+								ConcurrentHashMap<String, Object> data = bombs.get(i.getItemStack());
 								bombs.remove(i.getItemStack());
 								droppedBombs.put(i, data);
 								i.setPickupDelay(0);
@@ -181,7 +181,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		
 		if (droppedBombs.containsKey(event.getItem())) {
 			getLogger().info("Picked up a bomb");
-			HashMap<String, Object> data = droppedBombs.get(event.getItem());
+			ConcurrentHashMap<String, Object> data = droppedBombs.get(event.getItem());
 			data.put("Owner", event.getPlayer());
 			droppedBombs.remove(event.getItem());
 			bombs.put(item, data);
@@ -195,7 +195,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	public void onItemDrop(PlayerDropItemEvent event) {
 		Item item = event.getItemDrop();
 		if (bombs.containsKey(item.getItemStack())) {
-			HashMap<String, Object> data = bombs.get(item.getItemStack());
+			ConcurrentHashMap<String, Object> data = bombs.get(item.getItemStack());
 			bombs.remove(item.getItemStack());
 			droppedBombs.put(item, data);
 		}
@@ -228,7 +228,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	private ItemStack createBomb() {
 		ItemStack item = new ItemStack(bombItem);
 		ItemMeta meta = item.getItemMeta();
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<String, Object>();
 		map.put("Timer", delay);
 		meta.setDisplayName(getName(delay));
 		item.setItemMeta(meta);
@@ -238,7 +238,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	
 	private ItemStack createBomb(Player player) {
 		ItemStack bomb = createBomb();
-		HashMap<String, Object> map = bombs.get(bomb);
+		ConcurrentHashMap<String, Object> map = bombs.get(bomb);
 		bombs.remove(bomb);
 		map.put("Owner", player);
 		bombs.put(bomb, map);
