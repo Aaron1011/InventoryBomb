@@ -4,7 +4,7 @@ version: 1.4.1
 
 commands:
     giveBomb:
-        description: Give a bomb to the command runner, or the specified player
-        usage:  /giveBomb [player]
+        description: Give a bomb to the command runner, or the specified player, with the specified delay
+        usage:  /giveBomb [delay] [player]
         permission: InventoryBomb.giveBomb
         permission-message: You don't have permission to use /givebomb

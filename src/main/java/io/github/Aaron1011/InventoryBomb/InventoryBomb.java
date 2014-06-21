@@ -138,39 +138,52 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 				sender.sendMessage("You don't have permission to use /givebomb!");
 				return true;
 			}
-			if (args.length == 1) {
-				@SuppressWarnings("deprecation")
-				Player player = Bukkit.getPlayer(args[0]);
-				player.getInventory().addItem(createBomb(player));
-			}
-			else {
+			if (args.length == 0) {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
-					player.getInventory().addItem(createBomb(player));
+					player.getInventory().addItem(createBomb(player, delay));
+					return true;
 				}
 				else {
 					sender.sendMessage("This command can only be run as a player");
 				}
 			}
-			return true;
+			else if (args.length == 1) {
+				int time = Integer.valueOf(args[0]);
+				if (sender instanceof Player) {
+					Player player = (Player) sender;
+					player.getInventory().addItem(createBomb(player, time));
+					return true;
+				}
+				else {
+					sender.sendMessage("This command can only be run as a player");
+				}
 				
+			}
+			else if (args.length == 2) {
+				int time = Integer.valueOf(args[0]);
+				@SuppressWarnings("deprecation")
+				Player player = Bukkit.getPlayer(args[1]);
+				player.getInventory().addItem(createBomb(player, time));
+				return true;
+			}	
 		}
 		return false;
 	}
 
-	public ItemStack createBomb() {
+	public ItemStack createBomb(int time) {
 		ItemStack item = new ItemStack(bombItem);
 		ItemMeta meta = item.getItemMeta();
 		ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<String, Object>();
-		map.put("Timer", delay);
-		meta.setDisplayName(getName(delay));
+		map.put("Timer", time);
+		meta.setDisplayName(getName(time));
 		item.setItemMeta(meta);
 		bombs.put(item, map);
 		return item;
 	}
 	
-	public ItemStack createBomb(Player player) {
-		ItemStack bomb = createBomb();
+	public ItemStack createBomb(Player player, int time) {
+		ItemStack bomb = createBomb(time);
 		ConcurrentHashMap<String, Object> map = bombs.get(bomb);
 		bombs.remove(bomb);
 		map.put("Owner", player);

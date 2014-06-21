@@ -25,7 +25,7 @@ public class EventListener implements Listener {
 	public void onEntityDeath(EntityDeathEvent event) {
 		if (event.getEntityType() == EntityType.PLAYER) {
 			final Player player = (Player) event.getEntity();
-			ItemStack item = plugin.createBomb();
+			ItemStack item = plugin.createBomb(plugin.delay);
 			
 			event.getDrops().add(item);
 			
