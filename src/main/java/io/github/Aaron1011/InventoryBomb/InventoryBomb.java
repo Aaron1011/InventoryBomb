@@ -67,10 +67,11 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					int time = ((int) data.get("Timer")) - 1;
 
 					ItemStack item = entry.getKey();
+					
+					Player player = (Player) data.get("Owner");
 
 					data.put("Timer", time);
 					if (time <= 0) {
-						Player player = (Player) data.get("Owner");
 						player.playSound(player.getLocation(), Sound.EXPLODE, 1, 5);
 						player.sendMessage("Your bomb blew up!");
 						player.getInventory().remove(item);
@@ -84,7 +85,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 					}
 
 
-					Player player = (Player) data.get("Owner");
 					player.playSound(player.getLocation(), Sound.CLICK, 1, 5);
 
 
@@ -94,20 +94,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 						continue;
 					}
 					item = inInventory;
-
-					ItemMeta meta = item.getItemMeta();
-
-					bombs.remove(item);
-					meta.setDisplayName(getName(time));
-
-					item.setItemMeta(meta);
-					bombs.put(item, data);
-
-					if (item != null) {
-						item.setItemMeta(meta);
-					}
-
-
+					
+					updateBomb(item, time, data);
 
 
 				}
@@ -188,6 +176,16 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		map.put("Owner", player);
 		bombs.put(bomb, map);
 		return bomb;
+	}
+	
+	private void updateBomb(ItemStack item, int time, ConcurrentHashMap<String, Object> data) {
+		ItemMeta meta = item.getItemMeta();
+
+		bombs.remove(item);
+		meta.setDisplayName(getName(time));
+
+		item.setItemMeta(meta);
+		bombs.put(item, data);
 	}
 	
 	
