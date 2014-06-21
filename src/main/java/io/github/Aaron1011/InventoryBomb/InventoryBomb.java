@@ -142,11 +142,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		}, 0L, 20L);
 	}
 	
-
-	
-
-	
-	
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -175,7 +170,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		return false;
 	}
 
-	protected ItemStack createBomb() {
+	public ItemStack createBomb() {
 		ItemStack item = new ItemStack(bombItem);
 		ItemMeta meta = item.getItemMeta();
 		ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<String, Object>();
@@ -186,7 +181,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		return item;
 	}
 	
-	protected ItemStack createBomb(Player player) {
+	public ItemStack createBomb(Player player) {
 		ItemStack bomb = createBomb();
 		ConcurrentHashMap<String, Object> map = bombs.get(bomb);
 		bombs.remove(bomb);
