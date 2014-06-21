@@ -1,30 +1,22 @@
 package io.github.Aaron1011.InventoryBomb;
 
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
 import org.mcstats.Metrics;
 
 public final class InventoryBomb extends JavaPlugin implements Listener {
@@ -61,7 +53,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		this.bombs = new ConcurrentHashMap<ItemStack, ConcurrentHashMap<String, Object>>();
 		this.droppedBombs = new ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>>();
 
-		this.getServer().getPluginManager().registerEvents(this, this);
+		this.getServer().getPluginManager().registerEvents(new EventListener(this), this);
 		ItemMeta meta = bombItem.getItemMeta();
 		meta.setDisplayName(getName(delay));
 
@@ -150,65 +142,11 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		}, 0L, 20L);
 	}
 	
-	@EventHandler
-	public void onEntityDeath(EntityDeathEvent event) {
-		if (event.getEntityType() == EntityType.PLAYER) {
-			final Player player = (Player) event.getEntity();
-			ItemStack item = createBomb();
-			
-			event.getDrops().add(item);
-			
-			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-				@Override
-				public void run() {
-					for (Entity e: player.getNearbyEntities(4,4,4)) {
-						if (e.getType() == EntityType.DROPPED_ITEM) {
-							Item i = (Item) e;
-							if (bombs.containsKey(i.getItemStack())) {
-								ConcurrentHashMap<String, Object> data = bombs.get(i.getItemStack());
-								bombs.remove(i.getItemStack());
-								droppedBombs.put(i, data);
-								i.setPickupDelay(0);
-							}
-						}
-					}
-				}
-			});
-		}
-	}
-	
-	@EventHandler
-	public void onItemPickup(PlayerPickupItemEvent event) {
-		ItemStack item = event.getItem().getItemStack();
-		
-		event.setCancelled(true);
-		event.getPlayer().getInventory().addItem(item);
-		event.getItem().remove();
-		
-		
-		
-		if (droppedBombs.containsKey(event.getItem())) {
-			getLogger().info("Picked up a bomb");
-			ConcurrentHashMap<String, Object> data = droppedBombs.get(event.getItem());
-			data.put("Owner", event.getPlayer());
-			droppedBombs.remove(event.getItem());
-			bombs.put(item, data);
-		}
-		
-		
-		
-	}
-	
-	@EventHandler
-	public void onItemDrop(PlayerDropItemEvent event) {
-		Item item = event.getItemDrop();
-		if (bombs.containsKey(item.getItemStack())) {
-			ConcurrentHashMap<String, Object> data = bombs.get(item.getItemStack());
-			bombs.remove(item.getItemStack());
-			droppedBombs.put(item, data);
-		}
 
-	}
+	
+
+	
+	
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -237,7 +175,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		return false;
 	}
 
-	private ItemStack createBomb() {
+	protected ItemStack createBomb() {
 		ItemStack item = new ItemStack(bombItem);
 		ItemMeta meta = item.getItemMeta();
 		ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<String, Object>();
@@ -248,7 +186,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		return item;
 	}
 	
-	private ItemStack createBomb(Player player) {
+	protected ItemStack createBomb(Player player) {
 		ItemStack bomb = createBomb();
 		ConcurrentHashMap<String, Object> map = bombs.get(bomb);
 		bombs.remove(bomb);
@@ -256,6 +194,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		bombs.put(bomb, map);
 		return bomb;
 	}
+	
 	
 	private String getName(int time) {
 		return ChatColor.RESET + "" + ChatColor.RED + "Bomb! " +  ChatColor.YELLOW + time +  ChatColor.RESET + " seconds";
