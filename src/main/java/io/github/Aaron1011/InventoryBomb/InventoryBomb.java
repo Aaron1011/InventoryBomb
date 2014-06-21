@@ -34,7 +34,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
 	int delay;
 	private FileConfiguration config;
-	private int power;
+	private float power;
 
 	@Override
 	public void onDisable() {
@@ -56,7 +56,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		config = getConfig();
 
 		delay = config.getInt("bomb.delay");
-		power = config.getInt("bomb.power");
+		power = (float) config.getDouble("bomb.power");
 		
 		this.bombs = new ConcurrentHashMap<ItemStack, ConcurrentHashMap<String, Object>>();
 		this.droppedBombs = new ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>>();
