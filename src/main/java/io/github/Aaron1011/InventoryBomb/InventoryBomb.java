@@ -6,10 +6,12 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -22,6 +24,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 import org.mcstats.Metrics;
 
 public final class InventoryBomb extends JavaPlugin implements Listener {
@@ -30,6 +33,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>> droppedBombs;
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
 	int delay;
+	private FileConfiguration config;
+	private int power;
 
 	@Override
 	public void onDisable() {
@@ -48,7 +53,10 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		
 		this.saveDefaultConfig();
 		
-		delay = getConfig().getInt("bomb.delay");
+		config = getConfig();
+
+		delay = config.getInt("bomb.delay");
+		power = config.getInt("bomb.power");
 		
 		this.bombs = new ConcurrentHashMap<ItemStack, ConcurrentHashMap<String, Object>>();
 		this.droppedBombs = new ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>>();
@@ -119,7 +127,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 					data.put("Timer", time);
 					if (time <= 0) {
-						bomb.getWorld().createExplosion(bomb.getLocation(), 1);
+						bomb.getWorld().createExplosion(bomb.getLocation(), power);
 						bomb.remove();
 
 						if (!droppedBombs.containsKey(bomb)) {

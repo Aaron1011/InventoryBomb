@@ -1,2 +1,3 @@
 bomb:
   delay: 5 # The number of seconds until the bomb explodes
+  power: 1
