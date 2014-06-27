@@ -1,6 +1,7 @@
 package io.github.Aaron1011.InventoryBomb;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,7 +26,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>> droppedBombs;
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
 	int delay;
-	private float power;
+	//private float power;
 
 	@Override
 	public void onDisable() {
@@ -45,7 +46,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		this.saveDefaultConfig();
 
 		delay = getConfig().getInt("bomb.delay");
-		power = (float) getConfig().getDouble("bomb.power");
+		//power = (float) getConfig().getDouble("bomb.power");
 		
 		this.bombs = new ConcurrentHashMap<ItemStack, ConcurrentHashMap<String, Object>>();
 		this.droppedBombs = new ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>>();
@@ -104,7 +105,24 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 					data.put("Timer", time);
 					if (time <= 0) {
-						bomb.getWorld().createExplosion(bomb.getLocation(), power);
+						List<Map<?, ?>> actions = getConfig().getMapList("bomb.actions.dropped");
+						for (Map<?,?> action: actions) {
+							String type = (String) action.get("action");
+							switch (type) {
+								case "explode": {
+									bomb.getWorld().createExplosion(bomb.getLocation(), Float.valueOf(action.get("power").toString()));
+									break;
+								}
+								case "command": {
+									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), ((String) action.get("command")).replaceAll("<bomber>", ((Player)data.get("Bomber")).getDisplayName()));
+									break;
+								}
+								default: {
+									getLogger().warning("Unknown action type: " + type);
+								}
+							}
+						}
+						
 						bomb.remove();
 
 						if (!droppedBombs.containsKey(bomb)) {
@@ -138,7 +156,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 			if (args.length == 0) {
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
-					player.getInventory().addItem(createBomb(player, delay));
+					player.getInventory().addItem(createBomb(player, player, delay));
 					return true;
 				}
 				else {
@@ -149,7 +167,7 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 				int time = Integer.valueOf(args[0]);
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
-					player.getInventory().addItem(createBomb(player, time));
+					player.getInventory().addItem(createBomb(player, player, time));
 					return true;
 				}
 				else {
@@ -161,26 +179,27 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 				int time = Integer.valueOf(args[0]);
 				@SuppressWarnings("deprecation")
 				Player player = Bukkit.getPlayer(args[1]);
-				player.getInventory().addItem(createBomb(player, time));
+				player.getInventory().addItem(createBomb(player, player, time));
 				return true;
 			}	
 		}
 		return false;
 	}
 
-	public ItemStack createBomb(int time) {
+	public ItemStack createBomb(Player bomber, int time) {
 		ItemStack item = new ItemStack(bombItem);
 		ItemMeta meta = item.getItemMeta();
 		ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<String, Object>();
 		map.put("Timer", time);
+		map.put("Bomber", bomber);
 		meta.setDisplayName(getName(time));
 		item.setItemMeta(meta);
 		bombs.put(item, map);
 		return item;
 	}
 	
-	public ItemStack createBomb(Player player, int time) {
-		ItemStack bomb = createBomb(time);
+	public ItemStack createBomb(Player bomber, Player player, int time) {
+		ItemStack bomb = createBomb(bomber, time);
 		ConcurrentHashMap<String, Object> map = bombs.get(bomb);
 		bombs.remove(bomb);
 		map.put("Owner", player);
