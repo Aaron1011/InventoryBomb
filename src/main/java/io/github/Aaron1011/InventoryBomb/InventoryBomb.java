@@ -25,7 +25,6 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>> droppedBombs;
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
 	int delay;
-	private FileConfiguration config;
 	private float power;
 
 	@Override
@@ -44,11 +43,9 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		}
 		
 		this.saveDefaultConfig();
-		
-		config = getConfig();
 
-		delay = config.getInt("bomb.delay");
-		power = (float) config.getDouble("bomb.power");
+		delay = getConfig().getInt("bomb.delay");
+		power = (float) getConfig().getDouble("bomb.power");
 		
 		this.bombs = new ConcurrentHashMap<ItemStack, ConcurrentHashMap<String, Object>>();
 		this.droppedBombs = new ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>>();
