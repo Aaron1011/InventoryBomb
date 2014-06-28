@@ -1,6 +1,6 @@
 name: InventoryBomb
 main: io.github.Aaron1011.InventoryBomb.InventoryBomb
-version: 2.0.0
+version: 3.0.0
 
 commands:
     giveBomb:
