@@ -11,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -19,6 +18,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
+
+import net.amoebaman.amoebautils.plugin.Updater;
+import net.amoebaman.amoebautils.plugin.Updater.UpdateType;
 
 public final class InventoryBomb extends JavaPlugin implements Listener {
 	
@@ -47,6 +49,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 		delay = getConfig().getInt("bomb.delay");
 		//power = (float) getConfig().getDouble("bomb.power");
+		
+		runUpdater();
 		
 		this.bombs = new ConcurrentHashMap<ItemStack, ConcurrentHashMap<String, Object>>();
 		this.droppedBombs = new ConcurrentHashMap<Item, ConcurrentHashMap<String, Object>>();
@@ -169,6 +173,36 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 			}
 
 		}, 0L, 20L);
+	}
+	
+	private void runUpdater() {
+		if (getConfig().contains("update.checkForUpdates") && getConfig().getBoolean("update.checkForUpdates")) {
+			getLogger().info("Checking for updates");
+			UpdateType type = getConfig().getBoolean("update.autoInstallUpdates") ? UpdateType.DEFAULT : UpdateType.NO_DOWNLOAD;
+			Updater updater = new Updater(this, 81330, getFile(), type, true);
+			switch (updater.getResult()) {
+				case FAIL_BADID:
+				case FAIL_NOVERSION:
+					getLogger().severe("Failed to check for updates due to a bad plugin name/id. Contact the developer: " + updater.getResult().name());
+					break;
+				case FAIL_DBO:
+					getLogger().severe("An error occured while checking Bukki Dev for updates");
+					break;
+				case FAIL_DOWNLOAD:
+					getLogger().severe("An error occurred downloading the update.");
+					break;
+				case UPDATE_AVAILABLE:
+					getLogger().warning("An update for InventoryBomb is available to download on Bukki Dev");
+					break;
+				case NO_UPDATE:
+					getLogger().info("InventoryBomb is up to date!");
+					break;
+				case SUCCESS:
+					getLogger().info("InventoryBomb has been successfully updated. Restart the server to use the new version");
+					break;
+				default:
+			}
+		}
 	}
 	
 	

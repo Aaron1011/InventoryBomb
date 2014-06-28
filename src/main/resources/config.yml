@@ -18,3 +18,7 @@ bomb:
         pitch: 1
       - action: damage
         power: 5
+
+update:
+  checkForUpdates: true
+  autoInstallUpdates: true

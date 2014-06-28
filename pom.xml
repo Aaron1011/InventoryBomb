@@ -8,11 +8,16 @@
   	<repository>
   	  <id>bukkit-repo</id>
   	  <url>http://repo.bukkit.org/content/groups/public/</url>
-        </repository>
-        <repository>
-	  <id>Plugin Metrics</id>
-	  <url>http://repo.mcstats.org/content/repositories/public</url>
-	</repository>
+    </repository>
+    <repository>
+      <id>Plugin Metrics</id>
+      <url>http://repo.mcstats.org/content/repositories/public</url>
+  	</repository>
+    <repository>
+      <id>AmoebaUtils</id>
+      <url>http://local.amoebaman.net:8081/nexus/content/repositories/amoeba-repo/</url>
+</repository>
+
   </repositories>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -42,6 +47,10 @@
                               <pattern>org.mcstats</pattern>
                               <shadedPattern>io.github.Aaron1011.InventoryBomb.mcstats</shadedPattern>
                           </relocation>
+                          <relocation>
+                              <pattern>net.amoebaman</pattern>
+			      <shadedPattern>io.github.Aaron1011.InventoryBomb.amoebaman</shadedPattern>
+		      </relocation>
                       </relocations>
                   </configuration>
               </execution>
@@ -59,11 +68,17 @@
   		<version>${minecraft.version}-${craftbukkit.version}</version>
   	</dependency>
   	<dependency>
-  		<groupId>org.mcstats</groupId>
-		<artifactId>metrics</artifactId>
-		<scope>compile</scope>
-  		<version>R6</version>
-  	</dependency>
+        <groupId>org.mcstats</groupId>
+      <artifactId>metrics</artifactId>
+      <scope>compile</scope>
+        <version>R6</version>
+    </dependency>
+    <dependency>
+      <groupId>net.amoebaman</groupId>
+      <artifactId>amoebautils</artifactId>
+      <scope>compile</scope>
+      <version>1.1</version>
+    </dependency>
   </dependencies>
   <properties>
   	<minecraft.version>1.7.9</minecraft.version>
