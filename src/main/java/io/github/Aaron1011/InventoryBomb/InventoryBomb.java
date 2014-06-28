@@ -70,10 +70,36 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 
 					data.put("Timer", time);
 					if (time <= 0) {
-						player.playSound(player.getLocation(), Sound.EXPLODE, 1, 5);
-						player.sendMessage("Your bomb blew up!");
+						List<Map<?, ?>> actions = getConfig().getMapList("bomb.actions.held");
+						for (Map<?,?> action: actions) {
+							String type = (String) action.get("action");
+							switch (type) {
+								case "damage": {
+									player.damage(Float.valueOf(action.get("power").toString()));
+									break;
+								}
+								case "sound": {
+									Sound sound = Sound.valueOf(action.get("sound").toString().toUpperCase());
+									float volume = Float.valueOf(action.get("volume").toString());
+									float pitch = Float.valueOf(action.get("pitch").toString());
+									player.playSound(player.getLocation(), sound, volume, pitch);
+									break;
+								}
+								case "message": {
+									player.sendMessage(action.get("message").toString().replaceAll("<bomber>", ((Player) data.get("Bomber")).getDisplayName()));
+									break;
+								}
+								case "command": {
+									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), ((String) action.get("command")).replaceAll("<bomber>", ((Player)data.get("Bomber")).getDisplayName()));
+									break;
+								}
+								default: {
+									getLogger().warning("Unknown action type: " + type);
+								}
+							}
+						}
+						
 						player.getInventory().remove(item);
-						player.damage(0.0);
 
 						if (!bombs.containsKey(item)) {
 							getLogger().severe("Somehow, we've lost track of a bomb. This should NEVER happen - something is messed up");

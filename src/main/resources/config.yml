@@ -6,3 +6,15 @@ bomb:
         power: 5
       - action: command
         command: "say <bomber>'s bomb exploded"
+
+    held:
+      - action: message
+        message: <bomber>'s bomb exploded on you!
+      - action: damage
+        power: 5
+      - action: sound
+        sound: explode
+        volume: 10
+        pitch: 1
+      - action: damage
+        power: 5
