@@ -1,6 +1,6 @@
 language: java
 script: mvn clean package
-install: pip install dropbox
+install: sudo pip install dropbox
 
 env:
   global:
