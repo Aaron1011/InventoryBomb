@@ -1,0 +1,9 @@
+language: java
+script: mvn clean package
+install: pip install dropbox
+
+env:
+  global:
+  - secure: "fzcGAtMVm4octKHFFkDHx0D+wPOD5dNS6/DP6Qgmogj2oucKPtbMV8FK5Oj4FQ0iAEr8JuwRi4vk2UuEzWiv8yG+0lFbT7CX2qTcgLLgeudgQI/6NhQjHchicKHvFiG/0fCgYa/nKTgAKsqCHCSEoLTk8HafWAJGLQuzkzA+Vf8="
+ 
+after_success: if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then python upload_record.py; fi 
