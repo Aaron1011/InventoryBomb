@@ -13,4 +13,8 @@ def main():
 
     with open(filename) as f:
         client.put_file('/' + base + date + '-' + build_id, f, overwrite=True)
-    print("Successfully uploaded latest build to Dropbox" )
+    print("Successfully uploaded latest build to Dropbox")
+
+
+if __name__ == "__main__":
+    main()
