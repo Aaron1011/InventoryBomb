@@ -12,7 +12,7 @@ def main():
     build_id = env['TRAVIS_JOB_NUMBER']
 
     with open(filename) as f:
-        client.put_file('/' + base + date + '-' + build_id, f, overwrite=True)
+        client.put_file('/' + base + '-' + date + '-' + build_id, f, overwrite=True)
     print("Successfully uploaded latest build to Dropbox")
 
 
