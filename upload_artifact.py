@@ -6,7 +6,7 @@ import dropbox
 
 def main():
     client = dropbox.client.DropboxClient(env.get('DROPBOX_ACCESS_TOKEN'))
-    filename = glob.glob('target/InventoryBomb-*.jar')[0]
+    filename = glob('target/InventoryBomb-*.jar')[0]
     base = filename.split('.jar')[0]
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     build_id = env['TRAVIS_JOB_NUMBER']
