@@ -17,6 +17,10 @@
       <id>AmoebaUtils</id>
       <url>http://local.amoebaman.net:8081/nexus/content/repositories/amoeba-repo/</url>
 </repository>
+        <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
+        </repository>
 
   </repositories>
   <build>
@@ -60,6 +64,12 @@
   </build>
   <url>http://dev.bukkit.org/bukkit-plugins/inventorybomb/</url>
   <dependencies>
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>
   	<dependency>
   		<groupId>org.bukkit</groupId>
   		<artifactId>bukkit</artifactId>

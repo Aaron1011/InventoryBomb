@@ -16,11 +16,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
 import net.amoebaman.amoebautils.plugin.Updater;
 import net.amoebaman.amoebautils.plugin.Updater.UpdateType;
+
+import net.milkbowl.vault.economy.Economy;
 
 public final class InventoryBomb extends JavaPlugin implements Listener {
 	
@@ -29,6 +32,8 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 	ItemStack bombItem = new ItemStack(Material.BLAZE_ROD);
 	int delay;
 	//private float power;
+	protected Economy econ;
+	protected boolean economyEnabled = false;
 
 	@Override
 	public void onDisable() {
@@ -45,7 +50,27 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 		    // Failed to submit the stats :-(
 		}
 		
+		
 		this.saveDefaultConfig();
+		
+        if (!setupEconomy() ) {
+           getLogger().severe("No Vault dependency found! Disabling economy support");
+        }
+        else {
+        	if (getConfig().getConfigurationSection("bomb.cost") != null) {
+        		if (getConfig().getBoolean("bomb.cost.enabled")) {
+        			getLogger().info("Economy support enabled!");
+        			this.economyEnabled = true;
+        		}
+        		else {
+        			getLogger().info("Economy support disabled in config file");
+        		}
+        	}
+        	else {
+        		getLogger().severe("Config file missing 'cost' section! Disabling economy support");
+        	}
+        }
+
 
 		delay = getConfig().getInt("bomb.delay");
 		//power = (float) getConfig().getDouble("bomb.power");
@@ -244,6 +269,19 @@ public final class InventoryBomb extends JavaPlugin implements Listener {
 			}	
 		}
 		return false;
+	}
+	
+	private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+        	getLogger().warning("Vault not found! Disabling economy support");
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
 	}
 
 	public ItemStack createBomb(Player bomber, int time) {

@@ -2,6 +2,8 @@ package io.github.Aaron1011.InventoryBomb;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.milkbowl.vault.economy.EconomyResponse;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,6 +27,35 @@ public class EventListener implements Listener {
 	public void onEntityDeath(EntityDeathEvent event) {
 		if (event.getEntityType() == EntityType.PLAYER) {
 			final Player player = (Player) event.getEntity();
+
+			if (plugin.economyEnabled) {
+				if (player.hasPermission("InventoryBomb.skipCharge")) {
+					player.sendMessage("Giving you a bomb for free!");
+				}
+				else {
+					//boolean once = plugin.getConfig().getBoolean("bomb.cost.once");
+					double cost = plugin.getConfig().getDouble("bomb.cost.price");
+					plugin.getLogger().info(String.format("Charging %s %s for dropping a bomb", player.getName(), cost));
+					if (!plugin.econ.has(player, cost)) {
+						plugin.getLogger().severe(String.format("Player %s can't afford to pay for a bomb! Cancelling", player.getName()));
+						player.sendMessage("You can't afford a bomb!");
+						return;
+					}
+					EconomyResponse response = plugin.econ.withdrawPlayer(player, cost);
+					switch (response.type) {
+						case FAILURE:
+							plugin.getLogger().severe(String.format("Charging player %s failed - %s", player.getName(), response.errorMessage));
+							break;
+						case NOT_IMPLEMENTED:
+							plugin.getLogger().severe(String.format("Charging player %s failed - economy plugin doesn't support withdrawing money"));
+							break;
+						case SUCCESS:
+							plugin.getLogger().info(String.format("Successfully charged player %s %s", player.getName(), cost));
+							break;
+					}
+				}
+			}
+			
 			ItemStack item = plugin.createBomb(player, plugin.delay);
 			
 			event.getDrops().add(item);
